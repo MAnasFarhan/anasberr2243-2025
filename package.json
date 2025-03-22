@@ -1,0 +1,23 @@
+{
+  "name": "code",
+  "version": "1.0.0",
+  "description": "��#\u0000 \u0000a\u0000n\u0000a\u0000s\u0000b\u0000e\u0000r\u0000r\u00002\u00002\u00004\u00003\u0000-\u00002\u00000\u00002\u00005\u0000\r\u0000 \u0000\r\u0000 \u0000T\u0000E\u0000S\u0000T\u0000 \u00001\u0000",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MAnasFarhan/anasberr2243-2025.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MAnasFarhan/anasberr2243-2025/issues"
+  },
+  "homepage": "https://github.com/MAnasFarhan/anasberr2243-2025#readme",
+  "dependencies": {
+    "mongodb": "^6.15.0"
+  }
+}
