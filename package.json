@@ -19,5 +19,8 @@
   "homepage": "https://github.com/MAnasFarhan/anasberr2243-2025#readme",
   "dependencies": {
     "mongodb": "^6.15.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0"
   }
 }
