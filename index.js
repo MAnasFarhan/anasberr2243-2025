@@ -59,6 +59,12 @@ async function main(){
             const result = await driversCollection.insertOne(driver);
             console.log(`New driver created with result: ${result}`);
         });
+
+        const availableDrivers = await db.collection('drivers').find({
+            isAvailable: true,
+            rating: { $gte: 4.5 }
+        }).toArray();
+        console.log("Available drivers:", availableDrivers);
     /*
         //Insert a document(old code)
         await collection.insertOne({ name: "Anas", age: 23 });
