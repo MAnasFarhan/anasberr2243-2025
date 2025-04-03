@@ -60,12 +60,12 @@ async function main(){
             console.log(`New driver created with result: ${result}`);
         });
 
-        const updateResult = await db.collcection('drivers').updateOne(
+        const updateResult = await db.collection('drivers').updateOne(
             { name: "John Doe" },
             { $inc: { rating: 0.1 } }
         );
         console.log(`Driver updated with result: ${updateResult}`);
-        
+
         const availableDrivers = await db.collection('drivers').find({
             isAvailable: true,
             rating: { $gte: 4.5 }
