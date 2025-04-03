@@ -18,6 +18,10 @@ const drivers = [
 console.log(drivers);
 
 //TODO: show the all the drivers name in the console
+//const drivers = ["a", "b", "c"];
+
+drivers.forEach((element) => console.log(element));
+
 
 //TODO: add additional driver to the driver array
 async function main(){
