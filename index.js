@@ -24,6 +24,15 @@ drivers.forEach((element) => console.log(element));
 
 
 //TODO: add additional driver to the driver array
+const count = drivers.push("cows");
+console.log(count);
+// Expected output: 4
+console.log(drivers);
+// Expected output: Array ["pigs", "goats", "sheep", "cows"]
+
+
+
+
 async function main(){
     //Replace <connection-string> with your MongoDB URI
     const uri = "mongodb://localhost:27017"
