@@ -24,7 +24,7 @@ drivers.forEach((element) => console.log(element));
 
 
 //TODO: add additional driver to the driver array
-const count = drivers.push[
+const count = drivers.push(
     {
         name: "Anas Farhan",
         vehicleType: "SportsCars",
@@ -32,7 +32,7 @@ const count = drivers.push[
         rating: 5
     }
 
-];
+);
 console.log(count);
 // Expected output: 4
 console.log(drivers);
