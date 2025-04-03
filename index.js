@@ -24,12 +24,19 @@ drivers.forEach((element) => console.log(element));
 
 
 //TODO: add additional driver to the driver array
-const count = drivers.push("cows");
+const count = drivers.push[
+    {
+        name: "Anas Farhan",
+        vehicleType: "SportsCars",
+        isAvailable: true,
+        rating: 5
+    }
+
+];
 console.log(count);
 // Expected output: 4
 console.log(drivers);
-// Expected output: Array ["pigs", "goats", "sheep", "cows"]
-
+// Expected output: Array[all list]
 
 
 
