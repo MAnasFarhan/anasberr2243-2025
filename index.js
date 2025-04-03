@@ -72,7 +72,7 @@ async function main(){
         }).toArray();
         console.log("Available drivers:", availableDrivers);
 
-        const deleteResult = await db.collection('drivers').deleteOne( { isAvailable: false } );
+        const deleteResult = await db.collection('drivers').deleteMany( { isAvailable: false } );
         console.log(`Driver deleted with result: ${deleteResult}`
         );
 
