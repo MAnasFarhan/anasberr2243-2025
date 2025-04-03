@@ -71,6 +71,18 @@ async function main(){
             rating: { $gte: 4.5 }
         }).toArray();
         console.log("Available drivers:", availableDrivers);
+
+        const deleteResult = await db.collection('drivers').deleteOne( { isAvailable: false } );
+        console.log(`Driver deleted with result: ${deleteResult}`
+        );
+
+   } finally {
+        await client.close();
+    }
+}
+
+main();
+
     /*
         //Insert a document(old code)
         await collection.insertOne({ name: "Anas", age: 23 });
@@ -83,10 +95,3 @@ async function main(){
         console.error("Error:", err); 
         
     */
-
-   } finally {
-        await client.close();
-    }
-}
-
-main();
