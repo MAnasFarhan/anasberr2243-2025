@@ -60,7 +60,7 @@ async function main(){
             console.log(`New driver created with result: ${result}`);
         });
 
-        const updateResult = await db.collection('drivers').updateOne(
+        const updateResult = await db.collection('drivers').updateMany(
             { name: "John Doe" },
             { $inc: { rating: 0.1 } }
         );
