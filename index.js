@@ -53,9 +53,14 @@ async function main(){
         console.timeEnd("Connection Time");
         
         const db = client.db("testDB");
-        const collection = db.collection("users");
+        const driversCollection = db.collection("drivers");
 
-        //Insert a document
+        drivers.forEach(async (drive)=>{
+            const result = await driversCollection.insertOne(driver);
+            console.log(`New driver created with result: ${result}`);
+        });
+    /*
+        //Insert a document(old code)
         await collection.insertOne({ name: "Anas", age: 23 });
         console.log("Document inserted!");
         
@@ -63,8 +68,11 @@ async function main(){
         const result = await collection.findOne({ name: "Anas" });
         console.log("Query result:", result);
     }   catch (err) {
-        console.error("Error:", err);
-    }   finally {
+        console.error("Error:", err); 
+        
+    */
+   
+   } finally {
         await client.close();
     }
 }
