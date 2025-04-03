@@ -55,7 +55,7 @@ async function main(){
         const db = client.db("testDB");
         const driversCollection = db.collection("drivers");
 
-        drivers.forEach(async (drive)=>{
+        drivers.forEach(async (driver) => {
             const result = await driversCollection.insertOne(driver);
             console.log(`New driver created with result: ${result}`);
         });
@@ -71,7 +71,7 @@ async function main(){
         console.error("Error:", err); 
         
     */
-   
+
    } finally {
         await client.close();
     }
