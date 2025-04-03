@@ -34,7 +34,7 @@ const count = drivers.push(
 
 );
 console.log(count);
-// Expected output: 4
+// Expected output: 3 (John doe, Alice smith, Anas Farhan)
 console.log(drivers);
 // Expected output: Array[all list]
 
