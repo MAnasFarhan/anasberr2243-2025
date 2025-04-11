@@ -16,12 +16,8 @@ const drivers = [
 ];
 //show the data in the console
 console.log(drivers);
-
 //TODO: show the all the drivers name in the console
-//const drivers = ["a", "b", "c"];
-
 drivers.forEach((element) => console.log(element.name));
-
 
 //TODO: add additional driver to the driver array
 const count = drivers.push(
@@ -31,14 +27,11 @@ const count = drivers.push(
         isAvailable: true,
         rating: 5
     }
-
 );
 console.log(count);
 // Expected output: 3 (John doe, Alice smith, Anas Farhan)
 console.log(drivers);
 // Expected output: Array[all list]
-
-
 
 async function main(){
     //Replace <connection-string> with your MongoDB URI
