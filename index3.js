@@ -1,5 +1,5 @@
 const express = require('express');
-const { MongoClient } = require('mongodb');
+const { MongoClient , ObjectId} = require('mongodb');
 const port = 3000;
 
 const app = express();
@@ -27,7 +27,7 @@ app.listen(port, () => {
 });
 
 // GET /rides - fetch all rides
-app.get('/rider', async (req, res) => {
+app.get('/rides', async (req, res) => {
     try{
         const rides = await db.collection('rides').find().toArray();
         res.status(200).json(rides);
