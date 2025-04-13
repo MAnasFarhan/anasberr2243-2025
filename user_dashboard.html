@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management Dashboard</title>
+    <style>
+        :root {
+            --primary: #87ceeb;
+            --primary-dark: #5fb3d5;
+            --light: #ffffff;
+            --light-hover: #e0ffff;
+            --text: #333333;
+            --border: #87ceeb;
+            --success: #4CAF50;
+            --error: #f44336;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f9fa;
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background-color: var(--primary);
+            color: var(--light);
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .card {
+            background-color: var(--light);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .card-title {
+            font-size: 1.3rem;
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .btn {
+            background-color: var(--primary);
+            color: var(--light);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 16px;
+            margin-right: 10px;
+            margin-top: 10px;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .result-container {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            min-height: 100px;
+        }
+        
+        .success {
+            color: var(--success);
+        }
+        
+        .error {
+            color: var(--error);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        th {
+            background-color: var(--primary);
+            color: var(--light);
+        }
+        
+        tr:hover {
+            background-color: var(--light-hover);
+        }
+        
+        @media (max-width: 600px) {
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>User Management Dashboard</h1>
+            <p>Manage your users with ease</p>
+        </header>
+        
+        <div class="card">
+            <h2 class="card-title">User Operations</h2>
+            
+            <div class="form-group">
+                <label for="userName">Name:</label>
+                <input type="text" id="userName" placeholder="Enter user name">
+            </div>
+            
+            <div class="form-group">
+                <label for="userEmail">Email:</label>
+                <input type="email" id="userEmail" placeholder="Enter user email">
+            </div>
+            
+            <div class="form-group">
+                <label for="userPassword">Password:</label>
+                <input type="password" id="userPassword" placeholder="Enter user password">
+            </div>
+            
+            <div class="form-group">
+                <label for="userId">User ID (for update/delete):</label>
+                <input type="text" id="userId" placeholder="Enter user ID">
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn" onclick="createUser()">Create User</button>
+                <button class="btn" onclick="getUser()">Get User</button>
+                <button class="btn" onclick="updateUser()">Update Password</button>
+                <button class="btn" onclick="deleteUser()">Delete User</button>
+            </div>
+            
+            <div class="result-container" id="userResult">
+                <p>Results will appear here...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:3000';
+        
+        function displayResult(elementId, data, message = '') {
+            const container = document.getElementById(elementId);
+            
+            if (data && data.id) {
+                container.innerHTML = `
+                    <p class="success">${message || 'Operation successful!'}</p>
+                    <table>
+                        <tr>
+                            <th>ID</th>
+                        </tr>
+                        <tr>
+                            <td>${data.id}</td>
+                        </tr>
+                    </table>
+                `;
+            } else if (data) {
+                container.innerHTML = `
+                    <p class="success">${message || 'Operation successful!'}</p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } else {
+                container.innerHTML = `<p class="success">${message || 'Operation successful!'}</p>`;
+            }
+        }
+        
+        function displayError(elementId, error) {
+            const container = document.getElementById(elementId);
+            container.innerHTML = `
+                <p class="error">Error: ${error.message || error}</p>
+            `;
+        }
+        
+        async function createUser() {
+            const userName = document.getElementById('userName').value;
+            const userEmail = document.getElementById('userEmail').value;
+            const userPassword = document.getElementById('userPassword').value;
+            
+            if (!userName || !userEmail || !userPassword) {
+                displayError('userResult', 'Please fill all fields');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/users`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        UserName: userName,
+                        UserEmail: userEmail,
+                        UserPassword: userPassword
+                    })
+                });
+                
+                const data = await response.json();
+                displayResult('userResult', data, 'User created successfully!');
+                
+                // Clear the form
+                document.getElementById('userName').value = '';
+                document.getElementById('userEmail').value = '';
+                document.getElementById('userPassword').value = '';
+            } catch (error) {
+                displayError('userResult', error);
+            }
+        }
+        
+        async function getUser() {
+            const userId = document.getElementById('userId').value;
+            
+            if (!userId) {
+                displayError('userResult', 'Please enter a User ID');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/users/${userId}`);
+                
+                if (!response.ok) {
+                    throw new Error('User not found');
+                }
+                
+                const data = await response.json();
+                displayResult('userResult', data, 'User retrieved successfully!');
+            } catch (error) {
+                displayError('userResult', error);
+            }
+        }
+        
+        async function updateUser() {
+            const userId = document.getElementById('userId').value;
+            const userPassword = document.getElementById('userPassword').value;
+            
+            if (!userId || !userPassword) {
+                displayError('userResult', 'Please enter User ID and new Password');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "User Password": userPassword
+                    })
+                });
+                
+                const data = await response.json();
+                displayResult('userResult', data, 'Password updated successfully!');
+            } catch (error) {
+                displayError('userResult', error);
+            }
+        }
+        
+        async function deleteUser() {
+            const userId = document.getElementById('userId').value;
+            
+            if (!userId) {
+                displayError('userResult', 'Please enter a User ID');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.status === 204) {
+                    displayResult('userResult', null, 'User deleted successfully!');
+                } else {
+                    const data = await response.json();
+                    displayResult('userResult', data, 'User deleted successfully!');
+                }
+                
+                // Clear the ID field
+                document.getElementById('userId').value = '';
+            } catch (error) {
+                displayError('userResult', error);
+            }
+        }
+    </script>
+</body>
+</html>
