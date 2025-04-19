@@ -1,7 +1,8 @@
 const express = require('express');
 const { MongoClient , ObjectId} = require('mongodb');
 const port = 3000;
-
+const cors = require('cors');
+app.use(cors());
 const app = express();
 app.use(express.json());
 
@@ -27,19 +28,19 @@ app.listen(port, () => {
 });
 
 // GET /users - fetch all rides
-app.get('/users', async (req, res) => {
+app.get('/rides', async (req, res) => {
     try{
-        const rides = await db.collection('users').find().toArray();
+        const rides = await db.collection('rides').find().toArray();
         res.status(200).json(rides);
     } catch (err) {
-        res.status(500).json({ error: "Failed to fetch user" });
+        res.status(500).json({ error: "Failed to fetch ride" });
     }
 });
 
 //POST /rides - create a new ride
-app.post('/users', async (req, res) => {
+app.post('/rides', async (req, res) => {
     try {
-        const result = await db.collection('users').insertOne(req.body);
+        const result = await db.collection('rides').insertOne(req.body);
         res.status(201).json({ id: result.insertedId });
     } catch (err) {
         res.status(400).json({ error: "Invalid user data" });
@@ -47,19 +48,16 @@ app.post('/users', async (req, res) => {
 });
 
 //PATCH /rides/:id - Update ride status
-app.patch('/users/:id', async (req, res) => {
+app.patch('/rides/:id', async (req, res) => {
     try {
-        const result = await db.collection('users').updateOne(
+        const result = await db.collection('rides').updateOne(
             { _id: new ObjectId(req.params.id) },
-            { $set: { 
-                UserPassword: req.body.UserPassword,
-                //UserName: req.body.UserName,
-                //UserEmail: req.body.UserEmail
+            { $set: { status: req.body.status
             } }
         );
         
         if (result.modifiedCount === 0) {
-            return res.status(404).json({ error: "User not found" });
+            return res.status(404).json({ error: "Ride not found"});
         }
         res.status(200).json({ updated: result.modifiedCount });
 
@@ -70,18 +68,19 @@ app.patch('/users/:id', async (req, res) => {
 });
 
 //DELETE /rides/:id - Cancel a ride
-app.delete('/users/:id', async (req, res) => {
-    try{
-        const result = await db.collection('users').deleteOne(
+app.delete('/rides/:id', async (req, res) => { // Handles DELETE req to remove a ride or user by ID
+    
+    try {
+        const result = await db.collection('rides').deleteOne( // Deletes the ride with the matching ID from the db
             { _id: new ObjectId(req.params.id) }
         );
 
-        if (result.deletedCount === 0) {
-            return res.status(404).json({ error: "User not found" });
+        if (result.deletedCount === 0) { // if nothing was deleted, the ride probably didn't exist - return 404
+            return res.status(404).json({ error: "Ride not found"});
         }
-        res.status(200).json({ deleted: result.deleteCount });
+        res.status(200).json({ deleted: result.deletedCount}); // on succes, res with hoe many rides were deleted
 
-    }   catch (err) {
-        res.status(400).json({ error: "Invalid user ID" });
+    } catch (err) { // catch & return 400 Bad req for invalid IDs / other errors
+        res.status(400).json({ error: "Invalid ride ID" });
     }
 });

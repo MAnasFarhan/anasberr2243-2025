@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rides Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+</head>
+<body class="bg-gray-900 text-gray-100 font-sans">
+  <div class="max-w-3xl mx-auto p-6 space-y-10">
+    <h1 class="text-3xl font-bold text-center text-indigo-400">🚗 Rides Dashboard</h1>
+
+    <!-- GET -->
+    <section class="bg-gray-800 p-5 rounded-2xl shadow space-y-4">
+      <h2 class="text-xl font-semibold text-indigo-300">GET /rides</h2>
+      <button onclick="getRides()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg">
+        Fetch Rides
+      </button>
+      <pre id="getOutput" class="bg-gray-700 p-3 rounded text-sm overflow-x-auto text-white"></pre>
+    </section>
+
+    <!-- POST -->
+    <section class="bg-gray-800 p-5 rounded-2xl shadow space-y-4">
+      <h2 class="text-xl font-semibold text-green-300">POST /rides</h2>
+      <textarea id="postBody" rows="4" class="w-full p-3 border border-gray-600 rounded-md text-sm bg-gray-700 text-white">
+{
+  "pickupLocation": "Central Park",
+  "destination": "Times Square",
+  "driverId": "DRIVER123",
+  "status": "requested"
+}
+      </textarea>
+      <button onclick="createRide()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
+        Create Ride
+      </button>
+      <pre id="postOutput" class="bg-gray-700 p-3 rounded text-sm overflow-x-auto text-white"></pre>
+    </section>
+
+    <!-- PATCH -->
+    <section class="bg-gray-800 p-5 rounded-2xl shadow space-y-4">
+      <h2 class="text-xl font-semibold text-yellow-300">PATCH /rides/:id</h2>
+      <input id="patchId" placeholder="Ride ID" class="w-full p-3 border border-gray-600 rounded-md text-sm bg-gray-700 text-white" />
+      <textarea id="patchBody" rows="2" class="w-full p-3 border border-gray-600 rounded-md text-sm bg-gray-700 text-white">
+{
+  "status": "cancelled"
+}
+      </textarea>
+      <button onclick="updateRide()" class="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-lg">
+        Update Ride
+      </button>
+      <pre id="patchOutput" class="bg-gray-700 p-3 rounded text-sm overflow-x-auto text-white"></pre>
+    </section>
+
+    <!-- DELETE -->
+    <section class="bg-gray-800 p-5 rounded-2xl shadow space-y-4">
+      <h2 class="text-xl font-semibold text-red-300">DELETE /rides/:id</h2>
+      <input id="deleteId" placeholder="Ride ID" class="w-full p-3 border border-gray-600 rounded-md text-sm bg-gray-700 text-white" />
+      <button onclick="deleteRide()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">
+        Delete Ride
+      </button>
+      <pre id="deleteOutput" class="bg-gray-700 p-3 rounded text-sm overflow-x-auto text-white"></pre>
+    </section>
+  </div>
+
+  <script>
+    const baseUrl = 'http://localhost:3000/rides';
+
+    async function getRides() {
+      const res = await fetch(baseUrl);
+      const data = await res.json();
+      document.getElementById('getOutput').textContent = JSON.stringify(data, null, 2);
+    }
+
+    async function createRide() {
+      const body = document.getElementById('postBody').value;
+      const res = await fetch(baseUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body
+      });
+      const data = await res.json();
+      document.getElementById('postOutput').textContent = JSON.stringify(data, null, 2);
+    }
+
+    async function updateRide() {
+      const id = document.getElementById('patchId').value;
+      const body = document.getElementById('patchBody').value;
+      const res = await fetch(`${baseUrl}/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body
+      });
+      const data = await res.json();
+      document.getElementById('patchOutput').textContent = JSON.stringify(data, null, 2);
+    }
+
+    async function deleteRide() {
+      const id = document.getElementById('deleteId').value;
+      const res = await fetch(`${baseUrl}/${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      document.getElementById('deleteOutput').textContent = JSON.stringify(data, null, 2);
+    }
+  </script>
+</body>
+</html>
+
