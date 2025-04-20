@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Marketplace</title>
+  <style>
+    body {
+      background-color: #1e1e1e;
+      color: #e0e0e0;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #333;
+      padding: 1rem;
+      text-align: center;
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    section {
+      border-bottom: 1px solid #444;
+      padding: 2rem;
+    }
+
+    h2 {
+      color: #ccc;
+      border-bottom: 2px solid #555;
+      padding-bottom: 0.5rem;
+    }
+
+    form {
+      margin-bottom: 1rem;
+    }
+
+    input, button, select {
+      padding: 0.6rem;
+      margin: 0.3rem;
+      border: none;
+      border-radius: 4px;
+    }
+
+    input {
+      background-color: #2c2c2c;
+      color: #ddd;
+    }
+
+    button {
+      background-color: #555;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #777;
+    }
+
+    pre {
+      background-color: #2c2c2c;
+      padding: 1rem;
+      overflow-x: auto;
+    }
+
+    .error {
+      color: red;
+    }
+
+    .success {
+      color: lightgreen;
+    }
+
+    .response {
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>Marketplace Portal</header>
+
+<section id="customer">
+  <h2>Customer</h2>
+  <form id="customerRegister">
+    <strong>Register:</strong><br>
+    <input type="text" name="name" placeholder="Name" required>
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="password" name="password" placeholder="Password" required>
+    <button>Register</button>
+  </form>
+
+  <form id="customerLogin">
+    <strong>Login:</strong><br>
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="password" name="password" placeholder="Password" required>
+    <button>Login</button>
+  </form>
+
+  <button onclick="fetchItems()">View Items</button>
+  <div class="response" id="itemsOutput"></div>
+
+  <form id="placeOrder">
+    <strong>Place Order:</strong><br>
+    <input type="text" name="itemId" placeholder="Item ID" required>
+    <input type="text" name="customerId" placeholder="Customer ID" required>
+    <input type="text" name="sellerId" placeholder="Seller ID" required>
+    <button>Order</button>
+  </form>
+
+  <form id="reportIssue">
+    <strong>Report:</strong><br>
+    <input type="text" name="reporter" placeholder="Your ID" required>
+    <input type="text" name="message" placeholder="Message" required>
+    <button>Submit</button>
+  </form>
+</section>
+
+<section id="seller">
+  <h2>Seller</h2>
+  <form id="sellerRegister">
+    <strong>Register:</strong><br>
+    <input type="text" name="name" placeholder="Name" required>
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="password" name="password" placeholder="Password" required>
+    <button>Register</button>
+  </form>
+
+  <form id="sellerLogin">
+    <strong>Login:</strong><br>
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="password" name="password" placeholder="Password" required>
+    <button>Login</button>
+  </form>
+
+  <form id="addItem">
+    <strong>Add Item:</strong><br>
+    <input type="text" name="name" placeholder="Item Name" required>
+    <input type="text" name="price" placeholder="Price" required>
+    <input type="text" name="sellerId" placeholder="Seller ID" required>
+    <button>Add</button>
+  </form>
+
+  <form id="deleteItem">
+    <strong>Delete Item:</strong><br>
+    <input type="text" name="itemId" placeholder="Item ID" required>
+    <button>Delete</button>
+  </form>
+
+  <form id="viewSellerOrders">
+    <strong>View Orders:</strong><br>
+    <input type="text" name="sellerId" placeholder="Seller ID" required>
+    <button>View</button>
+  </form>
+  <div class="response" id="sellerOrdersOutput"></div>
+</section>
+
+<section id="admin">
+  <h2>Admin</h2>
+  <button onclick="viewAccounts()">View All Accounts</button>
+  <button onclick="viewReports()">View Reports</button>
+
+  <form id="deleteAccount">
+    <strong>Delete Account:</strong><br>
+    <select name="type" required>
+      <option value="customer">Customer</option>
+      <option value="seller">Seller</option>
+    </select>
+    <input type="text" name="id" placeholder="Account ID" required>
+    <button>Delete</button>
+  </form>
+
+  <div class="response" id="adminOutput"></div>
+</section>
+
+<script>
+  const api = 'http://localhost:3000';
+
+  const handleSubmit = (formId, route, method = 'POST', outputId = null) => {
+    document.getElementById(formId).addEventListener('submit', async e => {
+      e.preventDefault();
+      const form = e.target;
+      const data = Object.fromEntries(new FormData(form).entries());
+      if (Object.values(data).some(v => !v)) {
+        alert("All fields are required.");
+        return;
+      }
+      let resolvedRoute = typeof route === 'function' ? route(data) : route;
+      try {
+        const res = await fetch(`${api}${resolvedRoute}`, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: method === 'GET' ? null : JSON.stringify(data)
+        });
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.error || 'Request failed');
+        if (outputId) document.getElementById(outputId).innerText = JSON.stringify(result, null, 2);
+        alert("Success!");
+      } catch (err) {
+        alert("Error: " + err.message);
+      }
+    });
+  };
+
+  const fetchItems = async () => {
+    try {
+      const res = await fetch(`${api}/items`);
+      const items = await res.json();
+      document.getElementById('itemsOutput').innerText = JSON.stringify(items, null, 2);
+    } catch {
+      alert('Failed to load items');
+    }
+  };
+
+  const viewAccounts = async () => {
+    try {
+      const res = await fetch(`${api}/admin/accounts`);
+      const data = await res.json();
+      document.getElementById('adminOutput').innerText = JSON.stringify(data, null, 2);
+    } catch {
+      alert('Failed to fetch accounts');
+    }
+  };
+
+  const viewReports = async () => {
+    try {
+      const res = await fetch(`${api}/admin/reports`);
+      const reports = await res.json();
+      document.getElementById('adminOutput').innerText = JSON.stringify(reports, null, 2);
+    } catch {
+      alert('Failed to fetch reports');
+    }
+  };
+
+  document.getElementById('viewSellerOrders').addEventListener('submit', async e => {
+    e.preventDefault();
+    const sellerId = e.target.sellerId.value;
+    if (!sellerId) return alert("Seller ID is required");
+    try {
+      const res = await fetch(`${api}/orders/seller/${sellerId}`);
+      const orders = await res.json();
+      document.getElementById('sellerOrdersOutput').innerText = JSON.stringify(orders, null, 2);
+    } catch {
+      alert("Failed to load orders");
+    }
+  });
+
+  // Register all forms
+  handleSubmit('customerRegister', '/customers/register');
+  handleSubmit('customerLogin', '/customers/login');
+  handleSubmit('placeOrder', '/orders');
+  handleSubmit('reportIssue', '/reports');
+
+  handleSubmit('sellerRegister', '/sellers/register');
+  handleSubmit('sellerLogin', '/sellers/login');
+  handleSubmit('addItem', '/items');
+ 
+  handleSubmit('deleteItem', data => `/items/${data.itemId}`, 'DELETE');
+
+  handleSubmit('deleteAccount', data => `/admin/accounts/${data.type}/${data.id}`, 'DELETE', 'adminOutput');
+</script>
+
+</body>
+</html>
