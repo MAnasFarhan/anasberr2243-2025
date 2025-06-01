@@ -55,3 +55,9 @@ const authorize = (roles) => (req, res, next) => {
  return res.status(403).json({ error: "Forbidden" }); 
  next(); 
 };
+
+app.delete('/admin/users/:id', authenticate, authorize(['admin']), async (req,
+res) => { 
+ console.log("admin only");
+ res.status(200).send("admin access");
+});
