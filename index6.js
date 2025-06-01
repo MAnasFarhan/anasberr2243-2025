@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken'); 
-const bcrypt = require('bcryptjs'); // Use 'bcrypt' if it works for you
+const bcrypt = require('bcrypt'); // Use 'bcrypt' if it works for you
 const saltRounds = 10;
 
 app.post('/users', async (req, res) => {
