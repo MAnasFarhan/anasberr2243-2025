@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken'); 
 const bcrypt = require('bcryptjs'); // Use 'bcrypt' if it works for you
 const saltRounds = 10;
 
@@ -22,7 +23,7 @@ app.post('/users', async (req, res) => {
   }
 });
 
-const jwt = require('jsonwebtoken'); 
+
 app.post('/auth/login', async (req, res) => { 
  const user = await db.collection('users').findOne({ email: req.body.email
 }); 
