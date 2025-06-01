@@ -1,5 +1,23 @@
+const express = require('express');
 const jwt = require('jsonwebtoken'); 
 const bcrypt = require('bcrypt'); // Use 'bcrypt' if it works for you
+
+require('dotenv').config();
+
+const { MongoClient, ObjectId } = require('mongodb');
+const app = express();
+app.use(express.json());
+
+const uri = 'mongodb://localhost:27017';
+const client = new MongoClient(uri);
+let db;
+
+// Connect to MongoDB
+client.connect().then(() => {
+  db = client.db('e_hailing');
+  console.log('Connected to MongoDB');
+});
+
 const saltRounds = 10;
 
 app.post('/users', async (req, res) => {
@@ -22,6 +40,12 @@ app.post('/users', async (req, res) => {
     res.status(400).json({ error: "Registration failed" });
   }
 });
+
+// Start server
+app.listen(3000, () => {
+  console.log('Server running on http://localhost:3000');
+});
+
 
 
 app.post('/auth/login', async (req, res) => { 
