@@ -55,13 +55,3 @@ app.post('/account/login', async (req, res) => {
     }
 });
 
-//----------------------Passenger MANAGEMENT----------------------
-//ORDER RIDES
-app.post('/passengers', async (req, res) => {
-    try {
-        const result = await db.collection('orders').insertOne(req.body);
-        res.status(201).json({ id: result.insertedId });
-    } catch {
-        res.status(400).json({ error: "Failed to create order" });
-    }
-});
