@@ -57,7 +57,7 @@ app.post('/account/login', async (req, res) => {
 
 //----------------------Passenger MANAGEMENT----------------------
 //ORDER RIDES
-app.post('/passengers', async (req, res) => {
+app.post('/passengers/order', async (req, res) => {
     try {
         const result = await db.collection('orders').insertOne(req.body);
         res.status(201).json({ id: result.insertedId });
@@ -65,3 +65,25 @@ app.post('/passengers', async (req, res) => {
         res.status(400).json({ error: "Failed to create order" });
     }
 });
+
+//GET/SEES order RIDES
+app.get('/passengers/order', async (req, res) => {
+    try {
+        const orders = await db.collection('orders').find().toArray();
+        res.status(200).json(orders);
+    } catch {
+        res.status(400).json({ error: "Failed to retrieve orders" });
+    }
+});
+
+//DELETE order RIDES
+app.delete('/passengers/order/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await db.collection('orders').deleteOne({ _id: ObjectId(id) });
+        res.status(204).send();
+    } catch {
+        res.status(400).json({ error: "Failed to delete order" });
+    }
+});
+
