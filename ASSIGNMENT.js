@@ -87,3 +87,82 @@ app.delete('/passengers/order/:id', async (req, res) => {
     }
 });
 
+//DELETE PASSENGER ACCOUNT
+app.delete('/passengers/account/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await db.collection('account').deleteOne({ _id: ObjectId(id) });
+        res.status(204).send();
+    } catch {
+        res.status(400).json({ error: "Failed to delete account" });
+    }
+});
+
+//passenger Viewing drivers information
+app.get('/drivers', async (req, res) => {
+    try {
+        const drivers = await db.collection('account').find({ role: 'driver' }).toArray();
+        res.status(200).json(drivers);
+    } catch {
+        res.status(400).json({ error: "Failed to retrieve drivers" });
+    }
+});
+
+
+// -------------------Driver MANAGEMENT----------------------
+//DRIVER accept order from passenger
+app.post('/drivers/accept', async (req, res) => {
+    const { driverId, orderId } = req.body;
+    try {
+        const result = await db.collection('orders').updateOne(
+            { _id: ObjectId(orderId) },
+            { $set: { status: 'accepted', driverId: ObjectId(driverId) } }
+        );
+        if (result.modifiedCount === 0) {
+            return res.status(404).json({ error: "Order not found or already accepted" });
+        }
+        res.status(200).json({ message: "Order accepted successfully" });
+    } catch {
+        res.status(400).json({ error: "Failed to accept order" });
+    }
+});
+
+//view passenger orders
+app.get('/drivers/orders', async (req, res) => {
+    try {
+        const orders = await db.collection('orders').find({ status: 'accepted' }).toArray();
+        res.status(200).json(orders);
+    } catch {
+        res.status(400).json({ error: "Failed to retrieve orders" });
+    }
+});
+
+// driver can update own profile
+app.put('/drivers/profile/:id', async (req, res) => {
+    const { id } = req.params;
+    const { name, email } = req.body;
+    try {
+        const result = await db.collection('account').updateOne(
+            { _id: ObjectId(id) },
+            { $set: { name, email } }
+        );
+        if (result.modifiedCount === 0) {
+            return res.status(404).json({ error: "Driver not found" });
+        }
+        res.status(200).json({ message: "Profile updated successfully" });
+    } catch {
+        res.status(400).json({ error: "Failed to update profile" });
+    }
+}); 
+
+//driver delete account
+app.delete('/drivers/account/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await db.collection('account').deleteOne({ _id: ObjectId(id) });
+        res.status(204).send();
+    } catch {
+        res.status(400).json({ error: "Failed to delete account" });
+    }
+}); 
+
